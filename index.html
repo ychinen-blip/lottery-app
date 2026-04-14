@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>くじ引き大会 — 介グループ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c12;
+  --bg2: #12151f;
+  --bg3: #1a1e2e;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --text: #eef0f8;
+  --text2: #7a8099;
+  --text3: #3d4260;
+  --green: #00e5a0;
+  --green-dim: rgba(0,229,160,0.12);
+  --gold: #ffd94d;
+  --gold-dim: rgba(255,217,77,0.14);
+  --silver: #c8d4f0;
+  --silver-dim: rgba(200,212,240,0.12);
+  --bronze: #ff8c5a;
+  --bronze-dim: rgba(255,140,90,0.12);
+  --red: #ff5a5a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+/* ===== HEADER ===== */
+.app-header {
+  padding: 14px 24px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg2);
+  position: sticky; top: 0; z-index: 200;
+}
+.logo {
+  width: 34px; height: 34px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 900; color: #080a10;
+  flex-shrink: 0;
+}
+.app-title { font-size: 15px; font-weight: 700; }
+.app-sub { font-size: 11px; color: var(--text2); margin-top: 1px; }
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  background: var(--bg2);
+  border-bottom: 0.5px solid var(--border);
+  padding: 0 20px;
+}
+.tab {
+  padding: 13px 22px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: none;
+  color: var(--text2);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -0.5px;
+  transition: color 0.2s;
+  font-family: inherit;
+}
+.tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+/* ===== SCREENS ===== */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ===== ENTRY SCREEN ===== */
+.entry-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  padding: 20px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media (max-width: 760px) {
+  .entry-layout { grid-template-columns: 1fr; padding: 14px; }
+}
+.card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.card:last-child { margin-bottom: 0; }
+.card-title {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 14px;
+}
+label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; }
+input, select {
+  width: 100%;
+  background: var(--bg3);
+  border: 0.5px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px; color: var(--text);
+  font-family: inherit; margin-bottom: 12px;
+  outline: none; transition: border-color 0.2s;
+}
+input:focus, select:focus { border-color: var(--green); }
+select option { background: var(--bg3); }
+.btn {
+  width: 100%; padding: 11px;
+  border-radius: 8px; font-size: 13px; font-weight: 700;
+  cursor: pointer; border: none; font-family: inherit;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--green); color: #080a10; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--text2); border: 0.5px solid var(--border2); }
+.btn-secondary:hover { background: var(--bg3); }
+.btn-danger { background: transparent; color: var(--red); border: 0.5px solid rgba(255,90,90,0.3); }
+.btn-danger:hover { background: rgba(255,90,90,0.08); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; filter: none; }
+.stats-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--bg2); border: 0.5px solid var(--border);
+  border-radius: 10px; padding: 14px 10px; text-align: center;
+}
+.stat-num {
+  font-size: 24px; font-weight: 700;
+  font-family: 'DM Mono', monospace; color: var(--green);
+}
+.stat-label { font-size: 10px; color: var(--text2); margin-top: 3px; }
+.num-map {
+  display: grid; grid-template-columns: repeat(8,1fr); gap: 4px;
+}
+.num-cell {
+  aspect-ratio: 1; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-family: 'DM Mono', monospace; font-weight: 500;
+  background: var(--bg3); color: var(--text3);
+  border: 0.5px solid var(--border);
+  transition: all 0.2s; cursor: default;
+}
+.num-cell.taken { background: var(--green-dim); border-color: rgba(0,229,160,0.35); color: var(--green); }
+.dept-selector {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+}
+.dept-btn {
+  padding: 5px 12px; border-radius: 99px; font-size: 11px; font-weight: 500;
+  cursor: pointer; border: 0.5px solid var(--border2);
+  background: var(--bg3); color: var(--text2);
+  font-family: inherit; transition: all 0.15s;
+}
+.dept-btn.active { background: var(--green-dim); border-color: rgba(0,229,160,0.4); color: var(--green); }
+.entry-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 0; border-bottom: 0.5px solid var(--border);
+}
+.entry-row:last-child { border-bottom: none; }
+.entry-num {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--green); min-width: 36px; font-weight: 700;
+}
+.entry-name { font-size: 13px; font-weight: 500; }
+.entry-dept { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.delete-btn {
+  margin-left: auto; background: none; border: none;
+  color: var(--text3); cursor: pointer; font-size: 16px; padding: 2px 6px;
+  border-radius: 4px; font-family: inherit;
+  transition: color 0.15s;
+}
+.delete-btn:hover { color: var(--red); }
+.alert {
+  background: rgba(255,90,90,0.1); border: 0.5px solid rgba(255,90,90,0.3);
+  border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--red);
+  margin-bottom: 10px; display: none;
+}
+.alert.show { display: block; }
+.success-msg {
+  background: var(--green-dim); border: 0.5px solid rgba(0,229,160,0.3);
+  border-radius: 8px; padding: 9px 12px; font-size: 12px; color: var(--green);
+  margin-bottom: 10px; display: none;
+}
+.success-msg.show { display: block; }
+.empty-state { font-size: 12px; color: var(--text3); text-align: center; padding: 20px 0; }
+
+/* ===== LOTTERY SCREEN ===== */
+.lottery-layout {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 0;
+  height: calc(100vh - 100px);
+  max-height: 900px;
+}
+@media (max-width: 900px) {
+  .lottery-layout { grid-template-columns: 1fr; height: auto; max-height: none; }
+}
+.lottery-left {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; border-right: 0.5px solid var(--border);
+  background: radial-gradient(ellipse at center, #0f1525 0%, var(--bg) 70%);
+  gap: 0;
+}
+.lottery-right {
+  display: flex; flex-direction: column;
+  padding: 20px; overflow-y: auto; gap: 14px;
+}
+
+/* 数字スロット */
+.slot-frame {
+  position: relative;
+  width: min(340px, calc(100vw - 60px));
+  height: min(340px, calc(100vw - 60px));
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(0,229,160,0.2);
+  border-radius: 20px;
+  background: #080b14;
+  overflow: hidden;
+}
+.slot-frame::before, .slot-frame::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 80px; z-index: 2; pointer-events: none;
+}
+.slot-frame::before { top: 0; background: linear-gradient(to bottom, #080b14, transparent); }
+.slot-frame::after  { bottom: 0; background: linear-gradient(to top, #080b14, transparent); }
+.slot-scanline {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+}
+.slot-number {
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(100px, 22vw, 200px);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--green);
+  text-shadow: 0 0 60px rgba(0,229,160,0.6), 0 0 120px rgba(0,229,160,0.3);
+  transition: color 0.05s;
+  z-index: 3;
+  user-select: none;
+}
+.slot-number.idle { color: rgba(0,229,160,0.2); text-shadow: none; }
+.slot-number.rolling { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.8); }
+.slot-number.slowing { color: var(--green); text-shadow: 0 0 60px rgba(0,229,160,0.7); }
+.slot-corner {
+  position: absolute; width: 18px; height: 18px;
+  border-color: var(--green); border-style: solid; opacity: 0.5;
+}
+.slot-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.slot-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+.slot-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
+.slot-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+
+.prize-indicator {
+  margin-top: 20px; font-size: 14px; color: var(--text2); text-align: center;
+}
+.prize-indicator strong { color: var(--text); font-size: 18px; }
+.spin-btn {
+  margin-top: 16px; padding: 16px 56px;
+  font-size: 18px; font-weight: 900; border-radius: 99px;
+  cursor: pointer; border: none;
+  background: linear-gradient(135deg, #00e5a0, #00bfa0);
+  color: #080a10; font-family: inherit; letter-spacing: 0.06em;
+  transition: all 0.15s; box-shadow: 0 0 30px rgba(0,229,160,0.3);
+}
+.spin-btn:hover:not(:disabled) { filter: brightness(1.1); transform: scale(1.04); box-shadow: 0 0 50px rgba(0,229,160,0.5); }
+.spin-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+.spin-result { min-height: 80px; text-align: center; margin-top: 12px; }
+.result-name { font-size: 22px; font-weight: 700; }
+.result-dept { font-size: 13px; color: var(--text2); margin-top: 3px; }
+.prize-badge {
+  display: inline-block; padding: 5px 20px; border-radius: 99px;
+  font-size: 13px; font-weight: 700; margin-top: 10px; letter-spacing: 0.06em;
+}
+.badge-3 { background: var(--bronze-dim); color: var(--bronze); border: 0.5px solid rgba(255,140,90,0.4); }
+.badge-2 { background: var(--silver-dim); color: var(--silver); border: 0.5px solid rgba(200,212,240,0.4); }
+.badge-1 { background: var(--gold-dim); color: var(--gold); border: 0.5px solid rgba(255,217,77,0.4); }
+.winner-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 0.5px solid var(--border);
+}
+.winner-row:last-child { border-bottom: none; }
+.winner-rank { min-width: 52px; }
+.winner-info { flex: 1; }
+.winner-name { font-size: 14px; font-weight: 500; }
+.winner-dept { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.winner-amount { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; }
+.dept-filter-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+@keyframes pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+.pop-in { animation: pop 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.slot-flash { animation: flash 0.12s ease-in-out 4; }
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div class="logo">介</div>
+  <div>
+    <div class="app-title">くじ引き大会</div>
+    <div class="app-sub">事業所別・月次抽選システム</div>
+  </div>
+  <div style="margin-left:auto;font-size:12px;color:var(--text3)" id="current-dept-label"></div>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="showTab('entry')">エントリー</button>
+  <button class="tab" onclick="showTab('lottery')">抽選</button>
+  <button class="tab" onclick="showTab('results')">結果</button>
+</div>
+
+<!-- ===== エントリー ===== -->
+<div id="screen-entry" class="screen active">
+  <div class="entry-layout">
+    <!-- 左：入力フォーム -->
+    <div>
+      <div class="card">
+        <div class="card-title">対象事業所を選択</div>
+        <div class="dept-selector" id="dept-selector"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">新規エントリー</div>
+        <div class="alert" id="entry-error"></div>
+        <div class="success-msg" id="entry-success"></div>
+        <label>お名前</label>
+        <input type="text" id="name" placeholder="例：山田 太郎">
+        <label>希望番号（1〜40）</label>
+        <input type="number" id="num" min="1" max="40" placeholder="好きな番号を入力（早い者勝ち）">
+        <button class="btn btn-primary" onclick="addEntry()">エントリーする</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="s-count">0</div><div class="stat-label">エントリー数</div></div>
+        <div class="stat-card"><div class="stat-num" id="s-remain">40</div><div class="stat-label">残り枠</div></div>
+        <div class="stat-card"><div class="stat-num">7.5%</div><div class="stat-label">当選確率</div></div>
+      </div>
+    </div>
+    <!-- 右：マップ＆一覧 -->
+    <div>
+      <div class="card">
+        <div class="card-title">番号マップ（緑＝取得済み）</div>
+        <div class="num-map" id="nummap"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">エントリー一覧</div>
+        <div id="entry-list"><div class="empty-state">まだエントリーはありません</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 抽選 ===== -->
+<div id="screen-lottery" class="screen">
+  <div class="lottery-layout">
+    <!-- 左：数字スロット -->
+    <div class="lottery-left">
+      <div class="slot-frame" id="slotFrame">
+        <div class="slot-scanline"></div>
+        <div class="slot-corner tl"></div>
+        <div class="slot-corner tr"></div>
+        <div class="slot-corner bl"></div>
+        <div class="slot-corner br"></div>
+        <div class="slot-number idle" id="slotNumber">?</div>
+      </div>
+      <div class="prize-indicator">次の抽選：<strong id="next-prize">3等 30,000円</strong></div>
+      <button class="spin-btn" id="spinBtn" onclick="startSpin()">まわす</button>
+      <div class="spin-result" id="spin-result"></div>
+    </div>
+    <!-- 右：パネル -->
+    <div class="lottery-right">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">対象事業所</div>
+        <div class="dept-filter-row" id="lottery-dept-selector"></div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">当選履歴</div>
+        <div id="winners-display"><div class="empty-state">まだ抽選されていません</div></div>
+      </div>
+      <button class="btn btn-danger" onclick="resetLottery()">抽選リセット</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 結果 ===== -->
+<div id="screen-results" class="screen">
+  <div style="max-width:640px;margin:0 auto;padding:20px 16px;">
+    <div class="card">
+      <div class="card-title">今月の当選者</div>
+      <div id="results-display"><div class="empty-state">まだ抽選されていません</div></div>
+    </div>
+    <button class="btn btn-secondary" onclick="resetAll()">来月へリセット（全データ削除）</button>
+  </div>
+</div>
+
+<script>
+const DEPTS = ['松川','めかるの丘','てぃみぐすく','真地','浦添','繁多川','国場','本部・専門職連合'];
+// 抽選順：3等→2等→1等
+const PRIZES = [
+  { label:'3等', amount:'30,000円',  badgeCls:'badge-3', color:'#ff8c5a' },
+  { label:'2等', amount:'70,000円',  badgeCls:'badge-2', color:'#c8d4f0' },
+  { label:'1等', amount:'100,000円', badgeCls:'badge-1', color:'#ffd94d' },
+];
+const STORAGE_KEY = 'kai_lottery_v2';
+let state = {};
+let currentDept = DEPTS[0];
+let spinning = false;
+let slotAnimId = null;
+
+function deptState(dept) {
+  if (!state[dept]) state[dept] = { entries:{}, winners:[], spinCount:0 };
+  return state[dept];
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try { const d=localStorage.getItem(STORAGE_KEY); if(d) state=JSON.parse(d); } catch(e) {}
+}
+
+function showTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['entry','lottery','results'][i]===t));
+  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
+  document.getElementById('screen-'+t).classList.add('active');
+}
+
+function buildDeptSelectors() {
+  const es = document.getElementById('dept-selector');
+  es.innerHTML = DEPTS.map(d=>`<button class="dept-btn${d===currentDept?' active':''}" onclick="selectDept('${d}')">${d}</button>`).join('');
+  const ls = document.getElementById('lottery-dept-selector');
+  ls.innerHTML = DEPTS.map(d=>`<button class="dept-btn${d===currentDept?' active':''}" onclick="selectDeptLottery('${d}')">${d}</button>`).join('');
+  document.getElementById('current-dept-label').textContent = currentDept;
+}
+
+function selectDept(d) {
+  currentDept = d;
+  buildDeptSelectors();
+  render();
+}
+function selectDeptLottery(d) {
+  currentDept = d;
+  buildDeptSelectors();
+  document.getElementById('spin-result').innerHTML = '';
+  resetSlotDisplay();
+  renderWinners();
+  renderResults();
+  const ds = deptState(currentDept);
+  const prz = PRIZES[ds.spinCount];
+  document.getElementById('next-prize').textContent = prz ? prz.label+' '+prz.amount : '抽選完了';
+  document.getElementById('spinBtn').disabled = ds.spinCount>=3;
+}
+
+function showError(msg) {
+  const el=document.getElementById('entry-error');
+  el.textContent=msg; el.classList.add('show');
+  document.getElementById('entry-success').classList.remove('show');
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+function showSuccess(msg) {
+  const el=document.getElementById('entry-success');
+  el.textContent=msg; el.classList.add('show');
+  document.getElementById('entry-error').classList.remove('show');
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+function addEntry() {
+  const name = document.getElementById('name').value.trim();
+  const num  = parseInt(document.getElementById('num').value);
+  if (!name) { showError('お名前を入力してください'); return; }
+  if (!num||num<1||num>40) { showError('1〜40の番号を入力してください'); return; }
+  const ds = deptState(currentDept);
+  if (ds.entries[num]) { showError('番号'+num+'はすでに取得されています'); return; }
+  ds.entries[num] = name;
+  document.getElementById('name').value='';
+  document.getElementById('num').value='';
+  showSuccess(name+'さんのエントリー完了！（No.'+num+'）');
+  saveState(); render();
+}
+
+function deleteEntry(num) {
+  if (!confirm('No.'+num+' '+deptState(currentDept).entries[num]+' を削除しますか？')) return;
+  delete deptState(currentDept).entries[num];
+  saveState(); render();
+}
+
+function render() {
+  const ds = deptState(currentDept);
+  const count = Object.keys(ds.entries).length;
+  document.getElementById('s-count').textContent = count;
+  document.getElementById('s-remain').textContent = 40-count;
+  // 番号マップ
+  const map = document.getElementById('nummap');
+  map.innerHTML='';
+  for(let i=1;i<=40;i++){
+    const div=document.createElement('div');
+    div.className='num-cell'+(ds.entries[i]?' taken':'');
+    div.title=ds.entries[i]?ds.entries[i]:'空き';
+    div.textContent=i;
+    map.appendChild(div);
+  }
+  // 一覧
+  const el=document.getElementById('entry-list');
+  const keys=Object.keys(ds.entries);
+  if(!keys.length){el.innerHTML='<div class="empty-state">まだエントリーはありません</div>';return;}
+  el.innerHTML=keys.sort((a,b)=>+a-+b).map(n=>`
+    <div class="entry-row">
+      <div class="entry-num">No.${n}</div>
+      <div><div class="entry-name">${ds.entries[n]}</div><div class="entry-dept">${currentDept}</div></div>
+      <button class="delete-btn" onclick="deleteEntry(${n})">×</button>
+    </div>`).join('');
+}
+
+function renderWinners() {
+  const ds = deptState(currentDept);
+  const el = document.getElementById('winners-display');
+  if(!ds.winners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
+  el.innerHTML = ds.winners.map((w,i)=>{
+    const p=PRIZES[i];
+    return `<div class="winner-row">
+      <div class="winner-rank"><span class="prize-badge ${p.badgeCls}">${p.label}</span></div>
+      <div class="winner-info">
+        <div class="winner-name">${w.name}</div>
+        <div class="winner-dept">${currentDept} / No.${w.num}</div>
+      </div>
+      <div class="winner-amount" style="color:${p.color}">${p.amount}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderResults() {
+  const el = document.getElementById('results-display');
+  const allWinners = [];
+  DEPTS.forEach(d=>{
+    const ds=deptState(d);
+    ds.winners.forEach((w,i)=>{
+      allWinners.push({dept:d,name:w.name,num:w.num,prizeIdx:i});
+    });
+  });
+  if(!allWinners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
+  // 1等→2等→3等の順で表示（表示は逆順）
+  const sorted = allWinners.sort((a,b)=>b.prizeIdx-a.prizeIdx);
+  el.innerHTML = sorted.map(w=>{
+    const p=PRIZES[w.prizeIdx];
+    return `<div class="winner-row">
+      <div class="winner-rank"><span class="prize-badge ${p.badgeCls}">${p.label}<br><span style="font-size:10px">${p.amount}</span></span></div>
+      <div class="winner-info">
+        <div class="winner-name">${w.name}</div>
+        <div class="winner-dept">${w.dept}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== WHEEL ===== */
+/* ===== SLOT DISPLAY ===== */
+function resetSlotDisplay() {
+  const el = document.getElementById('slotNumber');
+  if (!el) return;
+  el.className = 'slot-number idle';
+  el.textContent = '?';
+}
+
+function setSlotNumber(n, cls) {
+  const el = document.getElementById('slotNumber');
+  if (!el) return;
+  el.className = 'slot-number ' + (cls||'');
+  el.textContent = n;
+}
+
+/* ===== SOUND ===== */
+let _audioCtx = null;
+function getAudioCtx() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return null;
+  if (!_audioCtx) _audioCtx = new AC();
+  if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+// F1スタートシグナル：プッ×3→ピーン（計3秒）
+function playStartSignal(onEnd) {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) { setTimeout(onEnd, 3000); return; }
+
+    function beep(t, freq, dur, vol) {
+      const o1 = ctx.createOscillator(), g1 = ctx.createGain();
+      o1.type = 'square'; o1.frequency.value = freq;
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.type = 'sawtooth'; o2.frequency.value = freq * 2.5;
+      g2.gain.value = 0.15;
+      g1.gain.setValueAtTime(0, t);
+      g1.gain.linearRampToValueAtTime(vol, t + 0.02);
+      g1.gain.setValueAtTime(vol, t + dur - 0.05);
+      g1.gain.linearRampToValueAtTime(0, t + dur);
+      o1.connect(g1); g1.connect(ctx.destination);
+      o2.connect(g2); g2.connect(ctx.destination);
+      o1.start(t); o1.stop(t + dur + 0.01);
+      o2.start(t); o2.stop(t + dur + 0.01);
+    }
+
+    const now = ctx.currentTime;
+    // 3秒間隔：0.0 / 0.9 / 1.8 → ピーン 2.7〜
+    beep(now + 0.0,  880, 0.22, 0.55);
+    beep(now + 0.9,  880, 0.22, 0.65);
+    beep(now + 1.8,  880, 0.22, 0.75);
+    beep(now + 2.7, 1320, 0.85, 0.85);
+
+    setTimeout(onEnd, 3000);
+  } catch(e) { setTimeout(onEnd, 3000); }
+}
+
+function playDrumroll(duration, onEnd) {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) { setTimeout(onEnd, duration*1000); return; }
+
+    const master = ctx.createGain();
+    master.gain.value = 0.9;
+    master.connect(ctx.destination);
+
+    // バスドラ：重低音3層
+    function kick(t, vol) {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(220, t);
+      o.frequency.exponentialRampToValueAtTime(32, t + 0.14);
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.3);
+
+      const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+      o2.type = 'triangle';
+      o2.frequency.setValueAtTime(90, t);
+      o2.frequency.exponentialRampToValueAtTime(28, t + 0.1);
+      g2.gain.setValueAtTime(vol * 0.5, t);
+      g2.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t + 0.2);
+
+      const ob = ctx.createOscillator(), gb = ctx.createGain();
+      ob.type = 'square'; ob.frequency.value = 120;
+      gb.gain.setValueAtTime(vol * 0.28, t);
+      gb.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+      ob.connect(gb); gb.connect(master); ob.start(t); ob.stop(t + 0.03);
+    }
+
+    // スネア：ノイズ多層
+    function snare(t, vol) {
+      const len = Math.floor(ctx.sampleRate * 0.2);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass'; bp.frequency.value = 2800; bp.Q.value = 0.4;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 900;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(vol * 1.5, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(master);
+      src.start(t); src.stop(t + 0.2);
+
+      const os = ctx.createOscillator(), gs = ctx.createGain();
+      os.type = 'triangle'; os.frequency.value = 195;
+      gs.gain.setValueAtTime(vol * 0.4, t);
+      gs.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      os.connect(gs); gs.connect(master); os.start(t); os.stop(t + 0.08);
+    }
+
+    // ハイハット
+    function hihat(t, vol, open) {
+      const len = Math.floor(ctx.sampleRate * (open ? 0.12 : 0.04));
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 9000;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(vol * 0.45, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + (open ? 0.1 : 0.035));
+      src.connect(hp); hp.connect(g); g.connect(master);
+      src.start(t); src.stop(t + (open ? 0.13 : 0.045));
+    }
+
+    // クラッシュシンバル
+    function crash(t, vol) {
+      const len = Math.floor(ctx.sampleRate * 1.2);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx.createBufferSource(); src.buffer = buf;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 4500;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(vol, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 1.0);
+      src.connect(hp); hp.connect(g); g.connect(master);
+      src.start(t); src.stop(t + 1.2);
+    }
+
+    let t = ctx.currentTime;
+    const end = t + duration;
+
+    // 冒頭クラッシュ＋キック
+    crash(t, 0.7); kick(t, 0.9);
+
+    // フェーズ1（前半35%）：バスドラ主体でゆっくり始動
+    const ph1end = t + duration * 0.35;
+    let iv = 0.36, beat = 0;
+    while (t < ph1end) {
+      const vol = 0.55 + 0.3 * (beat / 8);
+      kick(t, vol);
+      if (beat % 2 === 1) snare(t, vol * 0.7);
+      hihat(t, vol * 0.6, false);
+      if (iv > 0.15) hihat(t + iv * 0.5, vol * 0.3, false);
+      beat++; t += iv; iv = Math.max(0.13, iv * 0.91);
+    }
+
+    // フェーズ2（中盤35%）：スネア加速
+    const ph2end = t + duration * 0.35;
+    iv = 0.13; beat = 0;
+    while (t < ph2end) {
+      const vol = 0.75 + 0.2 * (beat / 12);
+      if (beat % 3 === 0) kick(t, vol);
+      snare(t, vol);
+      hihat(t, vol * 0.55, beat % 4 === 0);
+      beat++; t += iv; iv = Math.max(0.055, iv * 0.93);
+    }
+
+    // フェーズ3（後半30%）：怒涛の超高速連打
+    iv = 0.055; beat = 0;
+    while (t < end - 0.3) {
+      const vol = 0.9 + 0.1 * Math.min(beat / 10, 1);
+      if (beat % 2 === 0) kick(t, vol * 0.85);
+      snare(t, vol);
+      hihat(t, vol * 0.5, false);
+      beat++; t += iv; iv = Math.max(0.022, iv * 0.94);
+    }
+
+    // フィナーレ：クラッシュ＋10連打
+    crash(end - 0.28, 1.0);
+    for (let i = 0; i < 10; i++) {
+      const ft = end - 0.25 + i * 0.02;
+      snare(ft, 1.0); kick(ft, 0.9); hihat(ft, 0.7, i === 9);
+    }
+
+    setTimeout(onEnd, duration * 1000);
+  } catch(e) { setTimeout(onEnd, duration * 1000); }
+}
+
+// トランペット風ファンファーレ
+function playFanfare(prizeIdx) {
+  try {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+
+    function trumpet(t, freq, dur, vol) {
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0, t);
+      master.gain.linearRampToValueAtTime(vol, t + 0.03);
+      master.gain.setValueAtTime(vol * 0.85, t + 0.09);
+      master.gain.setValueAtTime(vol * 0.85, t + dur - 0.06);
+      master.gain.linearRampToValueAtTime(0, t + dur);
+      master.connect(ctx.destination);
+
+      // 基音＋倍音4層でトランペット音色を再現
+      [[1, 0.5, 'sawtooth'], [2, 0.25, 'sawtooth'], [3, 0.13, 'square'], [4, 0.06, 'sawtooth']].forEach(([mult, gain, type]) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = type; o.frequency.value = freq * mult;
+        g.gain.value = gain;
+        const bp = ctx.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = freq * 2.5; bp.Q.value = 1.5;
+        o.connect(g); g.connect(bp); bp.connect(master);
+        o.start(t); o.stop(t + dur + 0.05);
+      });
+    }
+
+    const now = ctx.currentTime;
+    const seqs = [
+      // 3等
+      [{f:523,d:0.2},{f:659,d:0.2},{f:784,d:0.5}],
+      // 2等
+      [{f:523,d:0.15},{f:659,d:0.15},{f:784,d:0.15},{f:1047,d:0.6}],
+      // 1等：勝利ファンファーレ
+      [{f:523,d:0.12},{f:523,d:0.12},{f:523,d:0.12},{f:659,d:0.22},{f:784,d:0.12},{f:1047,d:0.75}],
+    ];
+    const seq = seqs[prizeIdx] || seqs[0];
+    let t = now + 0.05;
+    seq.forEach(note => {
+      trumpet(t, note.f, note.d, 0.38);
+      t += note.d + 0.04;
+    });
+  } catch(e) {}
+}
+
+/* ===== SPIN ===== */
+function pickWinner() {
+  const ds = deptState(currentDept);
+  const used = ds.winners.map(w => w.num);
+  const pool = Array.from({length:40}, (_,i) => i+1).filter(n => !used.includes(n));
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function startSpin() {
+  const ds = deptState(currentDept);
+  if (spinning || ds.spinCount >= 3) return;
+  getAudioCtx();
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('spin-result').innerHTML = '';
+
+  const DRUM_DURATION = 3.5;
+  const targetNum = pickWinner();
+
+  // Phase1: F1シグナル中は「?」を点滅
+  let blinkId = null;
+  let blinkState = false;
+  blinkId = setInterval(() => {
+    blinkState = !blinkState;
+    setSlotNumber('?', blinkState ? 'rolling' : 'idle');
+  }, 220);
+
+  playStartSignal(() => {
+    // Phase2: シグナル終了→ドラムロール＋数字高速切替
+    clearInterval(blinkId);
+    let lastNum = -1;
+    let changeInterval = 55;
+    let elapsed = 0;
+
+    function rollTick() {
+      if (!spinning) return;
+      let n;
+      do { n = Math.floor(Math.random() * 40) + 1; } while (n === lastNum);
+      lastNum = n;
+      setSlotNumber(n, 'rolling');
+      elapsed += changeInterval;
+      if (elapsed < DRUM_DURATION * 1000 * 0.55) {
+        changeInterval = Math.max(28, changeInterval * 0.96);
+      } else {
+        changeInterval = Math.min(220, changeInterval * 1.09);
+      }
+      if (elapsed < DRUM_DURATION * 1000) {
+        slotAnimId = setTimeout(rollTick, changeInterval);
+      }
+    }
+    slotAnimId = setTimeout(rollTick, changeInterval);
+
+    playDrumroll(DRUM_DURATION, () => {
+      spinning = false;
+      clearTimeout(slotAnimId);
+      // フラッシュ→確定
+      let flashes = 0;
+      function flashFinal() {
+        setSlotNumber(targetNum, flashes % 2 === 0 ? 'slowing' : 'rolling');
+        flashes++;
+        if (flashes < 8) {
+          setTimeout(flashFinal, 75);
+        } else {
+          setSlotNumber(targetNum, 'slowing');
+          playFanfare(ds.spinCount);
+          const name = ds.entries[targetNum] || '(空くじ → チーム還元)';
+          const prz = PRIZES[ds.spinCount];
+          ds.winners.push({ name, num: targetNum });
+          ds.spinCount++;
+          saveState();
+          const nextPrz = PRIZES[ds.spinCount];
+          document.getElementById('next-prize').textContent = nextPrz ? nextPrz.label+' '+nextPrz.amount : '抽選完了';
+          document.getElementById('spinBtn').disabled = ds.spinCount >= 3;
+          document.getElementById('spin-result').innerHTML = `<div class="pop-in" style="margin-top:12px;">
+            <div class="result-name">${name}</div>
+            <div class="result-dept">${ds.entries[targetNum] ? currentDept+' / No.'+targetNum : ''}</div>
+            <span class="prize-badge ${prz.badgeCls}" style="margin-top:10px;font-size:15px;">${prz.label}　${prz.amount}</span>
+          </div>`;
+          renderWinners(); renderResults();
+        }
+      }
+      flashFinal();
+    });
+  });
+}
+
+function resetLottery() {
+  if (!confirm('「'+currentDept+'」の抽選結果をリセットしますか？')) return;
+  const ds = deptState(currentDept);
+  ds.winners = []; ds.spinCount = 0;
+  document.getElementById('spin-result').innerHTML = '';
+  saveState();
+  document.getElementById('next-prize').textContent = PRIZES[0].label+' '+PRIZES[0].amount;
+  document.getElementById('spinBtn').disabled = false;
+  resetSlotDisplay(); renderWinners(); renderResults();
+}
+
+function resetAll() {
+  if (!confirm('全事業所の全データをリセットして来月の準備をしますか？')) return;
+  state = {};
+  document.getElementById('spin-result').innerHTML = '';
+  saveState();
+  render(); buildDeptSelectors(); resetSlotDisplay(); renderWinners(); renderResults();
+  document.getElementById('next-prize').textContent = PRIZES[0].label+' '+PRIZES[0].amount;
+  document.getElementById('spinBtn').disabled = false;
+}
+
+loadState();
+buildDeptSelectors();
+render();
+renderResults();
+resetSlotDisplay();
+</script>
+</body>
+</html>
