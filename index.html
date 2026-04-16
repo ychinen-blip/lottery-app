@@ -141,7 +141,7 @@ select option { background: var(--bg3); }
 }
 .stat-label { font-size: 10px; color: var(--text2); margin-top: 3px; }
 .num-map {
-  display: grid; grid-template-columns: repeat(8,1fr); gap: 4px;
+  display: grid; grid-template-columns: repeat(10,1fr); gap: 4px;
 }
 .num-cell {
   aspect-ratio: 1; border-radius: 5px;
@@ -331,14 +331,14 @@ select option { background: var(--bg3); }
         <div class="success-msg" id="entry-success"></div>
         <label>お名前</label>
         <input type="text" id="name" placeholder="例：山田 太郎">
-        <label>希望番号（1〜40）</label>
-        <input type="number" id="num" min="1" max="40" placeholder="好きな番号を入力（早い者勝ち）">
+        <label>希望番号（1〜50）</label>
+        <input type="number" id="num" min="1" max="50" placeholder="好きな番号を入力（早い者勝ち）">
         <button class="btn btn-primary" onclick="addEntry()">エントリーする</button>
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-num" id="s-count">0</div><div class="stat-label">エントリー数</div></div>
-        <div class="stat-card"><div class="stat-num" id="s-remain">40</div><div class="stat-label">残り枠</div></div>
-        <div class="stat-card"><div class="stat-num">7.5%</div><div class="stat-label">当選確率</div></div>
+        <div class="stat-card"><div class="stat-num" id="s-remain">50</div><div class="stat-label">残り枠</div></div>
+        <div class="stat-card"><div class="stat-num">6%</div><div class="stat-label">当選確率</div></div>
       </div>
     </div>
     <!-- 右：マップ＆一覧 -->
@@ -472,7 +472,7 @@ function addEntry() {
   const name = document.getElementById('name').value.trim();
   const num  = parseInt(document.getElementById('num').value);
   if (!name) { showError('お名前を入力してください'); return; }
-  if (!num||num<1||num>40) { showError('1〜40の番号を入力してください'); return; }
+  if (!num||num<1||num>50) { showError('1〜50の番号を入力してください'); return; }
   const ds = deptState(currentDept);
   if (ds.entries[num]) { showError('番号'+num+'はすでに取得されています'); return; }
   ds.entries[num] = name;
@@ -492,11 +492,11 @@ function render() {
   const ds = deptState(currentDept);
   const count = Object.keys(ds.entries).length;
   document.getElementById('s-count').textContent = count;
-  document.getElementById('s-remain').textContent = 40-count;
+  document.getElementById('s-remain').textContent = 50-count;
   // 番号マップ
   const map = document.getElementById('nummap');
   map.innerHTML='';
-  for(let i=1;i<=40;i++){
+  for(let i=1;i<=50;i++){
     const div=document.createElement('div');
     div.className='num-cell'+(ds.entries[i]?' taken':'');
     div.title=ds.entries[i]?ds.entries[i]:'空き';
@@ -804,7 +804,7 @@ function playFanfare(prizeIdx) {
 function pickWinner() {
   const ds = deptState(currentDept);
   const used = ds.winners.map(w => w.num);
-  const pool = Array.from({length:40}, (_,i) => i+1).filter(n => !used.includes(n));
+  const pool = Array.from({length:50}, (_,i) => i+1).filter(n => !used.includes(n));
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
@@ -816,7 +816,7 @@ function startSpin() {
   document.getElementById('spinBtn').disabled = true;
   document.getElementById('spin-result').innerHTML = '';
 
-  const DRUM_DURATION = 3.5;
+  const DRUM_DURATION = 5.25;
   const targetNum = pickWinner();
 
   // Phase1: F1シグナル中は「?」を点滅
@@ -837,7 +837,7 @@ function startSpin() {
     function rollTick() {
       if (!spinning) return;
       let n;
-      do { n = Math.floor(Math.random() * 40) + 1; } while (n === lastNum);
+      do { n = Math.floor(Math.random() * 50) + 1; } while (n === lastNum);
       lastNum = n;
       setSlotNumber(n, 'rolling');
       elapsed += changeInterval;
