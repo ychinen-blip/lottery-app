@@ -304,6 +304,7 @@ function addEntry() {
 }
 
 function deleteEntry(num) {
+  if (!checkAdminPass()) return;
   if (!confirm('No.'+num+' 「'+state.entries[num]+'」を削除しますか？')) return;
   delete state.entries[num];
   saveState(); render();
@@ -311,6 +312,7 @@ function deleteEntry(num) {
 
 // ===== 編集モーダル =====
 function openEdit(num) {
+  if (!checkAdminPass()) return;
   document.getElementById('edit-old-num').value = num;
   document.getElementById('edit-name').value = state.entries[num];
   document.getElementById('edit-num').value = num;
@@ -608,8 +610,21 @@ function startSpin() {
   });
 }
 
+const ADMIN_PASS = 'tasuku91';
+
+function checkAdminPass() {
+  const input = prompt('管理者パスワードを入力してください');
+  if (input === null) return false; // キャンセル
+  if (input !== ADMIN_PASS) {
+    alert('パスワードが違います');
+    return false;
+  }
+  return true;
+}
+
 function resetLottery() {
-  if(!confirm('抽選結果をリセットしますか？（エントリーは残ります）'))return;
+  if (!checkAdminPass()) return;
+  if (!confirm('抽選結果をリセットしますか？（エントリーは残ります）')) return;
   state.winners=[];state.spinCount=0;
   document.getElementById('spin-result').innerHTML='';
   saveState();
@@ -619,7 +634,8 @@ function resetLottery() {
 }
 
 function resetAll() {
-  if(!confirm('全データをリセットして来月の準備をしますか？\n（エントリー・当選者すべて削除されます）'))return;
+  if (!checkAdminPass()) return;
+  if (!confirm('全データをリセットして来月の準備をしますか？\n（エントリー・当選者すべて削除されます）')) return;
   state={entries:{},winners:[],spinCount:0};
   document.getElementById('spin-result').innerHTML='';
   saveState();render();resetSlotDisplay();renderWinners();renderResults();
