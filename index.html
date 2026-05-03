@@ -7,46 +7,36 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0c12;
-  --bg2: #12151f;
-  --bg3: #1a1e2e;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.14);
-  --text: #eef0f8;
-  --text2: #7a8099;
-  --text3: #3d4260;
-  --green: #00e5a0;
-  --green-dim: rgba(0,229,160,0.12);
-  --gold: #ffd94d;
-  --gold-dim: rgba(255,217,77,0.14);
-  --silver: #c8d4f0;
-  --silver-dim: rgba(200,212,240,0.12);
-  --bronze: #ff8c5a;
-  --bronze-dim: rgba(255,140,90,0.12);
+  --bg: #0a0c12; --bg2: #12151f; --bg3: #1a1e2e;
+  --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14);
+  --text: #eef0f8; --text2: #7a8099; --text3: #3d4260;
+  --green: #00e5a0; --green-dim: rgba(0,229,160,0.12);
+  --gold: #ffd94d; --gold-dim: rgba(255,217,77,0.14);
+  --silver: #c8d4f0; --silver-dim: rgba(200,212,240,0.12);
+  --bronze: #ff8c5a; --bronze-dim: rgba(255,140,90,0.12);
   --red: #ff5a5a;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
 body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
 
-/* HEADER */
-.app-header {
-  padding: 14px 24px; border-bottom: 0.5px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-  background: var(--bg2); position: sticky; top: 0; z-index: 200;
-}
+.app-header { padding: 14px 24px; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg2); position: sticky; top: 0; z-index: 200; }
 .logo { width: 34px; height: 34px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; color: #080a10; flex-shrink: 0; }
 .app-title { font-size: 15px; font-weight: 700; }
 .app-sub { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.sync-status { margin-left: auto; font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
+.sync-dot.ok { background: var(--green); }
+.sync-dot.err { background: var(--red); }
+.sync-dot.loading { background: var(--gold); animation: pulse 0.8s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* TABS */
 .tabs { display: flex; background: var(--bg2); border-bottom: 0.5px solid var(--border); padding: 0 20px; }
 .tab { padding: 13px 22px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: color 0.2s; font-family: inherit; }
 .tab.active { color: var(--green); border-bottom-color: var(--green); }
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* ENTRY SCREEN */
 .entry-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; padding: 20px 24px; max-width: 1100px; margin: 0 auto; }
 @media (max-width: 760px) { .entry-layout { grid-template-columns: 1fr; padding: 14px; } }
 
@@ -77,19 +67,15 @@ select option { background: var(--bg3); }
 .num-cell { aspect-ratio: 1; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-family: 'DM Mono', monospace; font-weight: 500; background: var(--bg3); color: var(--text3); border: 0.5px solid var(--border); transition: all 0.2s; cursor: default; }
 .num-cell.taken { background: var(--green-dim); border-color: rgba(0,229,160,0.35); color: var(--green); }
 
-/* エントリー一覧行 */
 .entry-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
 .entry-row:last-child { border-bottom: none; }
 .entry-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--green); min-width: 36px; font-weight: 700; }
-.entry-name { font-size: 13px; font-weight: 500; }
-.entry-dept { font-size: 11px; color: var(--text2); margin-top: 1px; }
 .entry-actions { margin-left: auto; display: flex; gap: 4px; }
 .icon-btn { background: none; border: none; cursor: pointer; padding: 4px 7px; border-radius: 5px; font-size: 14px; font-family: inherit; transition: background 0.15s; color: var(--text3); }
 .icon-btn:hover { background: var(--bg3); }
 .icon-btn.edit:hover { color: var(--green); }
 .icon-btn.del:hover { color: var(--red); }
 
-/* 編集モーダル */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; }
 .modal-overlay.show { display: flex; }
 .modal { background: var(--bg2); border: 0.5px solid var(--border2); border-radius: 16px; padding: 24px; width: min(400px, calc(100vw - 32px)); }
@@ -103,51 +89,57 @@ select option { background: var(--bg3); }
 .success-msg.show { display: block; }
 .empty-state { font-size: 12px; color: var(--text3); text-align: center; padding: 20px 0; }
 
-/* LOTTERY SCREEN */
+/* ローディング */
+.loading-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.85); z-index: 999; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.loading-overlay.show { display: flex; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--text2); }
+
 .lottery-layout { display: grid; grid-template-columns: 1fr 400px; gap: 0; height: calc(100vh - 100px); max-height: 900px; }
 @media (max-width: 900px) { .lottery-layout { grid-template-columns: 1fr; height: auto; max-height: none; } }
 .lottery-left { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; border-right: 0.5px solid var(--border); background: radial-gradient(ellipse at center, #0f1525 0%, var(--bg) 70%); }
 .lottery-right { display: flex; flex-direction: column; padding: 20px; overflow-y: auto; gap: 14px; }
 
 .slot-frame { position: relative; width: min(340px, calc(100vw - 60px)); height: min(340px, calc(100vw - 60px)); display: flex; align-items: center; justify-content: center; border: 2px solid rgba(0,229,160,0.2); border-radius: 20px; background: #080b14; overflow: hidden; }
-.slot-frame::before, .slot-frame::after { content: ''; position: absolute; left: 0; right: 0; height: 80px; z-index: 2; pointer-events: none; }
-.slot-frame::before { top: 0; background: linear-gradient(to bottom, #080b14, transparent); }
-.slot-frame::after { bottom: 0; background: linear-gradient(to top, #080b14, transparent); }
-.slot-scanline { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px); }
-.slot-number { font-family: 'DM Mono', monospace; font-size: clamp(100px, 22vw, 200px); font-weight: 700; line-height: 1; color: var(--green); text-shadow: 0 0 60px rgba(0,229,160,0.6), 0 0 120px rgba(0,229,160,0.3); z-index: 3; user-select: none; }
-.slot-number.idle { color: rgba(0,229,160,0.2); text-shadow: none; }
-.slot-number.rolling { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.8); }
-.slot-number.slowing { color: var(--green); text-shadow: 0 0 60px rgba(0,229,160,0.7); }
-.slot-corner { position: absolute; width: 18px; height: 18px; border-color: var(--green); border-style: solid; opacity: 0.5; }
-.slot-corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
-.slot-corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
-.slot-corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; }
-.slot-corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; }
+.slot-frame::before,.slot-frame::after { content:''; position:absolute; left:0; right:0; height:80px; z-index:2; pointer-events:none; }
+.slot-frame::before { top:0; background:linear-gradient(to bottom,#080b14,transparent); }
+.slot-frame::after { bottom:0; background:linear-gradient(to top,#080b14,transparent); }
+.slot-scanline { position:absolute; inset:0; z-index:1; pointer-events:none; background:repeating-linear-gradient(to bottom,transparent 0px,transparent 3px,rgba(0,0,0,0.08) 3px,rgba(0,0,0,0.08) 4px); }
+.slot-number { font-family:'DM Mono',monospace; font-size:clamp(100px,22vw,200px); font-weight:700; line-height:1; color:var(--green); text-shadow:0 0 60px rgba(0,229,160,0.6),0 0 120px rgba(0,229,160,0.3); z-index:3; user-select:none; }
+.slot-number.idle { color:rgba(0,229,160,0.2); text-shadow:none; }
+.slot-number.rolling { color:#fff; text-shadow:0 0 40px rgba(255,255,255,0.8); }
+.slot-number.slowing { color:var(--green); text-shadow:0 0 60px rgba(0,229,160,0.7); }
+.slot-corner { position:absolute; width:18px; height:18px; border-color:var(--green); border-style:solid; opacity:0.5; }
+.slot-corner.tl{top:10px;left:10px;border-width:2px 0 0 2px}
+.slot-corner.tr{top:10px;right:10px;border-width:2px 2px 0 0}
+.slot-corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px}
+.slot-corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0}
 
-.prize-indicator { margin-top: 20px; font-size: 14px; color: var(--text2); text-align: center; }
-.prize-indicator strong { color: var(--text); font-size: 18px; }
-.spin-btn { margin-top: 16px; padding: 16px 56px; font-size: 18px; font-weight: 900; border-radius: 99px; cursor: pointer; border: none; background: linear-gradient(135deg, #00e5a0, #00bfa0); color: #080a10; font-family: inherit; letter-spacing: 0.06em; transition: all 0.15s; box-shadow: 0 0 30px rgba(0,229,160,0.3); }
-.spin-btn:hover:not(:disabled) { filter: brightness(1.1); transform: scale(1.04); box-shadow: 0 0 50px rgba(0,229,160,0.5); }
-.spin-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
-.spin-result { min-height: 80px; text-align: center; margin-top: 12px; }
-.result-name { font-size: 22px; font-weight: 700; }
-.result-dept { font-size: 13px; color: var(--text2); margin-top: 3px; }
+.prize-indicator { margin-top:20px; font-size:14px; color:var(--text2); text-align:center; }
+.prize-indicator strong { color:var(--text); font-size:18px; }
+.spin-btn { margin-top:16px; padding:16px 56px; font-size:18px; font-weight:900; border-radius:99px; cursor:pointer; border:none; background:linear-gradient(135deg,#00e5a0,#00bfa0); color:#080a10; font-family:inherit; letter-spacing:0.06em; transition:all 0.15s; box-shadow:0 0 30px rgba(0,229,160,0.3); }
+.spin-btn:hover:not(:disabled) { filter:brightness(1.1); transform:scale(1.04); box-shadow:0 0 50px rgba(0,229,160,0.5); }
+.spin-btn:disabled { opacity:0.3; cursor:not-allowed; transform:none; box-shadow:none; }
+.spin-result { min-height:80px; text-align:center; margin-top:12px; }
+.result-name { font-size:22px; font-weight:700; }
+.result-dept { font-size:13px; color:var(--text2); margin-top:3px; }
 
-.prize-badge { display: inline-block; padding: 5px 20px; border-radius: 99px; font-size: 13px; font-weight: 700; margin-top: 10px; letter-spacing: 0.06em; }
-.badge-3 { background: var(--bronze-dim); color: var(--bronze); border: 0.5px solid rgba(255,140,90,0.4); }
-.badge-2 { background: var(--silver-dim); color: var(--silver); border: 0.5px solid rgba(200,212,240,0.4); }
-.badge-1 { background: var(--gold-dim); color: var(--gold); border: 0.5px solid rgba(255,217,77,0.4); }
+.prize-badge { display:inline-block; padding:5px 20px; border-radius:99px; font-size:13px; font-weight:700; margin-top:10px; letter-spacing:0.06em; }
+.badge-3 { background:var(--bronze-dim); color:var(--bronze); border:0.5px solid rgba(255,140,90,0.4); }
+.badge-2 { background:var(--silver-dim); color:var(--silver); border:0.5px solid rgba(200,212,240,0.4); }
+.badge-1 { background:var(--gold-dim); color:var(--gold); border:0.5px solid rgba(255,217,77,0.4); }
 
-.winner-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-.winner-row:last-child { border-bottom: none; }
-.winner-rank { min-width: 52px; }
-.winner-info { flex: 1; }
-.winner-name { font-size: 14px; font-weight: 500; }
-.winner-dept { font-size: 11px; color: var(--text2); margin-top: 1px; }
-.winner-amount { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; }
+.winner-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:0.5px solid var(--border); }
+.winner-row:last-child { border-bottom:none; }
+.winner-rank { min-width:52px; }
+.winner-info { flex:1; }
+.winner-name { font-size:14px; font-weight:500; }
+.winner-dept { font-size:11px; color:var(--text2); margin-top:1px; }
+.winner-amount { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; }
 
 @keyframes pop { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
-.pop-in { animation: pop 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
+.pop-in { animation:pop 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
 </style>
 </head>
 <body>
@@ -158,6 +150,10 @@ select option { background: var(--bg3); }
     <div class="app-title">くじ引き大会</div>
     <div class="app-sub">月次抽選システム</div>
   </div>
+  <div class="sync-status">
+    <div class="sync-dot" id="syncDot"></div>
+    <span id="syncLabel">接続中...</span>
+  </div>
 </div>
 
 <div class="tabs">
@@ -166,10 +162,9 @@ select option { background: var(--bg3); }
   <button class="tab" onclick="showTab('results')">結果</button>
 </div>
 
-<!-- ===== エントリー ===== -->
+<!-- エントリー -->
 <div id="screen-entry" class="screen active">
   <div class="entry-layout">
-    <!-- 左：入力フォーム -->
     <div>
       <div class="card">
         <div class="card-title">新規エントリー</div>
@@ -179,39 +174,37 @@ select option { background: var(--bg3); }
         <input type="text" id="name" placeholder="例：山田 太郎">
         <label>希望番号（1〜50）</label>
         <input type="number" id="num" min="1" max="50" placeholder="好きな番号を入力（早い者勝ち）">
-        <button class="btn btn-primary" onclick="addEntry()">エントリーする</button>
+        <button class="btn btn-primary" id="entryBtn" onclick="addEntry()">エントリーする</button>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-num" id="s-count">0</div><div class="stat-label">エントリー数</div></div>
-        <div class="stat-card"><div class="stat-num" id="s-remain">50</div><div class="stat-label">残り枠</div></div>
+        <div class="stat-card"><div class="stat-num" id="s-count">-</div><div class="stat-label">エントリー数</div></div>
+        <div class="stat-card"><div class="stat-num" id="s-remain">-</div><div class="stat-label">残り枠</div></div>
         <div class="stat-card"><div class="stat-num">6%</div><div class="stat-label">当選確率</div></div>
       </div>
-      <button class="btn btn-danger" onclick="resetAll()" style="margin-top:4px;">来月へリセット（全データ削除）</button>
+      <button class="btn btn-secondary" onclick="loadAll()" style="margin-bottom:8px;">🔄 最新データを取得</button>
+      <button class="btn btn-danger" onclick="resetAll()">来月へリセット（全データ削除）</button>
     </div>
-    <!-- 右：マップ＆一覧 -->
     <div>
       <div class="card">
         <div class="card-title">番号マップ（緑＝取得済み）</div>
         <div class="num-map" id="nummap"></div>
       </div>
       <div class="card">
-        <div class="card-title">エントリー一覧 <span style="color:var(--text3);font-size:10px;font-weight:400;">✏️ 鉛筆アイコンで修正できます</span></div>
-        <div id="entry-list"><div class="empty-state">まだエントリーはありません</div></div>
+        <div class="card-title">エントリー一覧 <span style="color:var(--text3);font-size:10px;font-weight:400;">✏️ 管理者のみ修正可</span></div>
+        <div id="entry-list"><div class="empty-state">データ取得中...</div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== 抽選 ===== -->
+<!-- 抽選 -->
 <div id="screen-lottery" class="screen">
   <div class="lottery-layout">
     <div class="lottery-left">
-      <div class="slot-frame" id="slotFrame">
+      <div class="slot-frame">
         <div class="slot-scanline"></div>
-        <div class="slot-corner tl"></div>
-        <div class="slot-corner tr"></div>
-        <div class="slot-corner bl"></div>
-        <div class="slot-corner br"></div>
+        <div class="slot-corner tl"></div><div class="slot-corner tr"></div>
+        <div class="slot-corner bl"></div><div class="slot-corner br"></div>
         <div class="slot-number idle" id="slotNumber">?</div>
       </div>
       <div class="prize-indicator">次の抽選：<strong id="next-prize">3等 30,000円</strong></div>
@@ -223,22 +216,24 @@ select option { background: var(--bg3); }
         <div class="card-title">当選履歴</div>
         <div id="winners-display"><div class="empty-state">まだ抽選されていません</div></div>
       </div>
+      <button class="btn btn-secondary" onclick="loadAll()">🔄 最新データを取得</button>
       <button class="btn btn-danger" onclick="resetLottery()">抽選リセット</button>
     </div>
   </div>
 </div>
 
-<!-- ===== 結果 ===== -->
+<!-- 結果 -->
 <div id="screen-results" class="screen">
   <div style="max-width:640px;margin:0 auto;padding:20px 16px;">
     <div class="card">
       <div class="card-title">今月の当選者</div>
       <div id="results-display"><div class="empty-state">まだ抽選されていません</div></div>
     </div>
+    <button class="btn btn-secondary" onclick="loadAll()" style="margin-top:8px;">🔄 最新データを取得</button>
   </div>
 </div>
 
-<!-- ===== 編集モーダル ===== -->
+<!-- 編集モーダル -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
     <div class="modal-title">✏️ エントリーを修正</div>
@@ -255,22 +250,74 @@ select option { background: var(--bg3); }
   </div>
 </div>
 
+<!-- ローディング -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">処理中...</div>
+</div>
+
 <script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwYXevA5Twy05Q8XJkCv1s0Rz8viEfLWRr8cN4YIGVoDytU3NCKnur_q_r798vXbx5_4Q/exec';
+const ADMIN_PASS = 'tasuku91';
+
 const PRIZES = [
   { label:'3等', amount:'30,000円',  badgeCls:'badge-3', color:'#ff8c5a' },
   { label:'2等', amount:'70,000円',  badgeCls:'badge-2', color:'#c8d4f0' },
   { label:'1等', amount:'100,000円', badgeCls:'badge-1', color:'#ffd94d' },
 ];
 
-const STORAGE_KEY = 'kai_lottery_v3';
-// state: { entries:{num: name}, winners:[], spinCount:0 }
-let state = { entries:{}, winners:[], spinCount:0 };
+let entries = {};   // {num: name}
+let winners = [];   // [{num, name, prize, amount}]
+let spinCount = 0;
 let spinning = false;
 let slotAnimId = null;
 
-function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
-function loadState() { try { const d=localStorage.getItem(STORAGE_KEY); if(d) state=JSON.parse(d); } catch(e) {} }
+// ===== API =====
+async function api(params) {
+  const url = GAS_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return res.json();
+}
 
+function setSyncStatus(state) {
+  const dot = document.getElementById('syncDot');
+  const label = document.getElementById('syncLabel');
+  dot.className = 'sync-dot ' + state;
+  label.textContent = state==='ok' ? '同期済み' : state==='loading' ? '通信中...' : 'エラー';
+}
+
+function showLoading(text='処理中...') {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+async function loadAll() {
+  setSyncStatus('loading');
+  try {
+    const [eRes, wRes] = await Promise.all([
+      api({action:'getEntries'}),
+      api({action:'getWinners'})
+    ]);
+    if (eRes.entries) entries = eRes.entries;
+    if (wRes.winners) {
+      winners = wRes.winners;
+      spinCount = winners.length;
+    }
+    setSyncStatus('ok');
+    render();
+    renderWinners();
+    renderResults();
+    updatePrizeIndicator();
+    document.getElementById('spinBtn').disabled = spinCount >= 3;
+  } catch(e) {
+    setSyncStatus('err');
+  }
+}
+
+// ===== UI =====
 function showTab(t) {
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['entry','lottery','results'][i]===t));
   document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
@@ -280,93 +327,127 @@ function showTab(t) {
 function showError(id, msg) {
   const el=document.getElementById(id);
   el.textContent=msg; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 3500);
+  setTimeout(()=>el.classList.remove('show'),3500);
 }
 function showSuccess(msg) {
   const el=document.getElementById('entry-success');
   el.textContent=msg; el.classList.add('show');
   document.getElementById('entry-error').classList.remove('show');
-  setTimeout(()=>el.classList.remove('show'), 3500);
+  setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+function checkAdminPass() {
+  const input = prompt('管理者パスワードを入力してください');
+  if (input === null) return false;
+  if (input !== ADMIN_PASS) { alert('パスワードが違います'); return false; }
+  return true;
 }
 
 // ===== エントリー =====
-function addEntry() {
+async function addEntry() {
   const name = document.getElementById('name').value.trim();
   const num  = parseInt(document.getElementById('num').value);
   if (!name) { showError('entry-error','お名前を入力してください'); return; }
   if (!num||num<1||num>50) { showError('entry-error','1〜50の番号を入力してください'); return; }
-  if (state.entries[num]) { showError('entry-error','番号'+num+'はすでに取得されています'); return; }
-  state.entries[num] = name;
-  document.getElementById('name').value='';
-  document.getElementById('num').value='';
-  showSuccess(name+'さんのエントリー完了！（No.'+num+'）');
-  saveState(); render();
+  if (entries[num]) { showError('entry-error','番号'+num+'はすでに取得されています'); return; }
+
+  const btn = document.getElementById('entryBtn');
+  btn.disabled = true;
+  showLoading('エントリー中...');
+  setSyncStatus('loading');
+  try {
+    const res = await api({action:'addEntry', num, name});
+    if (res.error) { showError('entry-error', res.error); }
+    else {
+      entries[num] = name;
+      document.getElementById('name').value='';
+      document.getElementById('num').value='';
+      showSuccess(name+'さんのエントリー完了！（No.'+num+'）');
+      render();
+      setSyncStatus('ok');
+    }
+  } catch(e) {
+    showError('entry-error','通信エラーが発生しました。再度お試しください。');
+    setSyncStatus('err');
+  } finally {
+    btn.disabled = false;
+    hideLoading();
+  }
 }
 
-function deleteEntry(num) {
+async function deleteEntry(num) {
   if (!checkAdminPass()) return;
-  if (!confirm('No.'+num+' 「'+state.entries[num]+'」を削除しますか？')) return;
-  delete state.entries[num];
-  saveState(); render();
+  if (!confirm('No.'+num+' 「'+entries[num]+'」を削除しますか？')) return;
+  showLoading('削除中...');
+  setSyncStatus('loading');
+  try {
+    await api({action:'deleteEntry', num});
+    delete entries[num];
+    render();
+    setSyncStatus('ok');
+  } catch(e) { setSyncStatus('err'); }
+  finally { hideLoading(); }
 }
 
 // ===== 編集モーダル =====
 function openEdit(num) {
   if (!checkAdminPass()) return;
   document.getElementById('edit-old-num').value = num;
-  document.getElementById('edit-name').value = state.entries[num];
+  document.getElementById('edit-name').value = entries[num];
   document.getElementById('edit-num').value = num;
   document.getElementById('edit-error').classList.remove('show');
   document.getElementById('editModal').classList.add('show');
-  setTimeout(()=>document.getElementById('edit-name').focus(), 100);
+  setTimeout(()=>document.getElementById('edit-name').focus(),100);
 }
-function closeModal() {
-  document.getElementById('editModal').classList.remove('show');
-}
-function saveEdit() {
+function closeModal() { document.getElementById('editModal').classList.remove('show'); }
+
+async function saveEdit() {
   const oldNum = parseInt(document.getElementById('edit-old-num').value);
   const newName = document.getElementById('edit-name').value.trim();
   const newNum  = parseInt(document.getElementById('edit-num').value);
   if (!newName) { showError('edit-error','お名前を入力してください'); return; }
   if (!newNum||newNum<1||newNum>50) { showError('edit-error','1〜50の番号を入力してください'); return; }
-  if (newNum !== oldNum && state.entries[newNum]) { showError('edit-error','番号'+newNum+'はすでに取得されています'); return; }
-  delete state.entries[oldNum];
-  state.entries[newNum] = newName;
-  saveState(); render();
-  closeModal();
+  if (newNum !== oldNum && entries[newNum]) { showError('edit-error','番号'+newNum+'はすでに取得されています'); return; }
+
+  showLoading('更新中...');
+  setSyncStatus('loading');
+  try {
+    const res = await api({action:'editEntry', oldNum, newNum, name:newName});
+    if (res.error) { showError('edit-error', res.error); }
+    else {
+      delete entries[oldNum];
+      entries[newNum] = newName;
+      render();
+      closeModal();
+      setSyncStatus('ok');
+    }
+  } catch(e) { showError('edit-error','通信エラーが発生しました'); setSyncStatus('err'); }
+  finally { hideLoading(); }
 }
-// モーダル外クリックで閉じる
-document.getElementById('editModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+
+document.getElementById('editModal').addEventListener('click', function(e){ if(e.target===this)closeModal(); });
 
 // ===== レンダリング =====
 function render() {
-  const count = Object.keys(state.entries).length;
+  const count = Object.keys(entries).length;
   document.getElementById('s-count').textContent = count;
   document.getElementById('s-remain').textContent = 50-count;
-
-  // 番号マップ
   const map = document.getElementById('nummap');
   map.innerHTML='';
   for(let i=1;i<=50;i++){
     const div=document.createElement('div');
-    div.className='num-cell'+(state.entries[i]?' taken':'');
-    div.title=state.entries[i]?state.entries[i]:'空き';
+    div.className='num-cell'+(entries[i]?' taken':'');
+    div.title=entries[i]?entries[i]:'空き';
     div.textContent=i;
     map.appendChild(div);
   }
-
-  // エントリー一覧
   const el=document.getElementById('entry-list');
-  const keys=Object.keys(state.entries);
+  const keys=Object.keys(entries);
   if(!keys.length){el.innerHTML='<div class="empty-state">まだエントリーはありません</div>';return;}
   el.innerHTML=keys.sort((a,b)=>+a-+b).map(n=>`
     <div class="entry-row">
       <div class="entry-num">No.${n}</div>
-      <div style="flex:1">
-        <div class="entry-name">${state.entries[n]}</div>
-      </div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:500">${entries[n]}</div></div>
       <div class="entry-actions">
         <button class="icon-btn edit" onclick="openEdit(${n})" title="修正">✏️</button>
         <button class="icon-btn del"  onclick="deleteEntry(${n})" title="削除">×</button>
@@ -376,15 +457,12 @@ function render() {
 
 function renderWinners() {
   const el=document.getElementById('winners-display');
-  if(!state.winners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
-  el.innerHTML=state.winners.map((w,i)=>{
+  if(!winners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
+  el.innerHTML=winners.map((w,i)=>{
     const p=PRIZES[i];
     return `<div class="winner-row">
       <div class="winner-rank"><span class="prize-badge ${p.badgeCls}">${p.label}</span></div>
-      <div class="winner-info">
-        <div class="winner-name">${w.name}</div>
-        <div class="winner-dept">No.${w.num}</div>
-      </div>
+      <div class="winner-info"><div class="winner-name">${w.name}</div><div class="winner-dept">No.${w.num}</div></div>
       <div class="winner-amount" style="color:${p.color}">${p.amount}</div>
     </div>`;
   }).join('');
@@ -392,17 +470,19 @@ function renderWinners() {
 
 function renderResults() {
   const el=document.getElementById('results-display');
-  if(!state.winners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
-  el.innerHTML=state.winners.map((w,i)=>{
+  if(!winners.length){el.innerHTML='<div class="empty-state">まだ抽選されていません</div>';return;}
+  el.innerHTML=winners.map((w,i)=>{
     const p=PRIZES[i];
     return `<div class="winner-row">
       <div class="winner-rank"><span class="prize-badge ${p.badgeCls}">${p.label}<br><span style="font-size:10px">${p.amount}</span></span></div>
-      <div class="winner-info">
-        <div class="winner-name">${w.name}</div>
-        <div class="winner-dept">No.${w.num}</div>
-      </div>
+      <div class="winner-info"><div class="winner-name">${w.name}</div><div class="winner-dept">No.${w.num}</div></div>
     </div>`;
   }).join('');
+}
+
+function updatePrizeIndicator() {
+  const prz=PRIZES[spinCount];
+  document.getElementById('next-prize').textContent=prz?prz.label+' '+prz.amount:'抽選完了';
 }
 
 // ===== スロット =====
@@ -417,7 +497,7 @@ function setSlotNumber(n,cls) {
 
 // ===== 音声 =====
 let _audioCtx=null;
-function getAudioCtx() {
+function getAudioCtx(){
   const AC=window.AudioContext||window.webkitAudioContext;
   if(!AC)return null;
   if(!_audioCtx)_audioCtx=new AC();
@@ -425,40 +505,31 @@ function getAudioCtx() {
   return _audioCtx;
 }
 
-function playStartSignal(onEnd) {
-  try {
-    const ctx=getAudioCtx();
-    if(!ctx){setTimeout(onEnd,3000);return;}
-    function beep(t,freq,dur,vol) {
+function playStartSignal(onEnd){
+  try{
+    const ctx=getAudioCtx();if(!ctx){setTimeout(onEnd,3000);return;}
+    function beep(t,freq,dur,vol){
       const o1=ctx.createOscillator(),g1=ctx.createGain();
       o1.type='square';o1.frequency.value=freq;
       const o2=ctx.createOscillator(),g2=ctx.createGain();
       o2.type='sawtooth';o2.frequency.value=freq*2.5;g2.gain.value=0.15;
-      g1.gain.setValueAtTime(0,t);
-      g1.gain.linearRampToValueAtTime(vol,t+0.02);
-      g1.gain.setValueAtTime(vol,t+dur-0.05);
-      g1.gain.linearRampToValueAtTime(0,t+dur);
-      o1.connect(g1);g1.connect(ctx.destination);
-      o2.connect(g2);g2.connect(ctx.destination);
-      o1.start(t);o1.stop(t+dur+0.01);
-      o2.start(t);o2.stop(t+dur+0.01);
+      g1.gain.setValueAtTime(0,t);g1.gain.linearRampToValueAtTime(vol,t+0.02);
+      g1.gain.setValueAtTime(vol,t+dur-0.05);g1.gain.linearRampToValueAtTime(0,t+dur);
+      o1.connect(g1);g1.connect(ctx.destination);o2.connect(g2);g2.connect(ctx.destination);
+      o1.start(t);o1.stop(t+dur+0.01);o2.start(t);o2.stop(t+dur+0.01);
     }
     const now=ctx.currentTime;
-    beep(now+0.0, 880,0.22,0.55);
-    beep(now+0.9, 880,0.22,0.65);
-    beep(now+1.8, 880,0.22,0.75);
-    beep(now+2.7,1320,0.85,0.85);
+    beep(now+0.0,880,0.22,0.55);beep(now+0.9,880,0.22,0.65);
+    beep(now+1.8,880,0.22,0.75);beep(now+2.7,1320,0.85,0.85);
     setTimeout(onEnd,3000);
-  } catch(e){setTimeout(onEnd,3000);}
+  }catch(e){setTimeout(onEnd,3000);}
 }
 
-function playDrumroll(duration,onEnd) {
-  try {
-    const ctx=getAudioCtx();
-    if(!ctx){setTimeout(onEnd,duration*1000);return;}
+function playDrumroll(duration,onEnd){
+  try{
+    const ctx=getAudioCtx();if(!ctx){setTimeout(onEnd,duration*1000);return;}
     const master=ctx.createGain();master.gain.value=0.9;master.connect(ctx.destination);
-
-    function kick(t,vol) {
+    function kick(t,vol){
       const o=ctx.createOscillator(),g=ctx.createGain();
       o.type='sine';o.frequency.setValueAtTime(220,t);o.frequency.exponentialRampToValueAtTime(32,t+0.14);
       g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.28);
@@ -472,7 +543,7 @@ function playDrumroll(duration,onEnd) {
       gb.gain.setValueAtTime(vol*0.28,t);gb.gain.exponentialRampToValueAtTime(0.001,t+0.025);
       ob.connect(gb);gb.connect(master);ob.start(t);ob.stop(t+0.03);
     }
-    function snare(t,vol) {
+    function snare(t,vol){
       const len=Math.floor(ctx.sampleRate*0.2);
       const buf=ctx.createBuffer(1,len,ctx.sampleRate);
       const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
@@ -486,7 +557,7 @@ function playDrumroll(duration,onEnd) {
       gs.gain.setValueAtTime(vol*0.4,t);gs.gain.exponentialRampToValueAtTime(0.001,t+0.07);
       os.connect(gs);gs.connect(master);os.start(t);os.stop(t+0.08);
     }
-    function hihat(t,vol,open) {
+    function hihat(t,vol,open){
       const len=Math.floor(ctx.sampleRate*(open?0.12:0.04));
       const buf=ctx.createBuffer(1,len,ctx.sampleRate);
       const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
@@ -495,7 +566,7 @@ function playDrumroll(duration,onEnd) {
       const g=ctx.createGain();g.gain.setValueAtTime(vol*0.45,t);g.gain.exponentialRampToValueAtTime(0.001,t+(open?0.1:0.035));
       src.connect(hp);hp.connect(g);g.connect(master);src.start(t);src.stop(t+(open?0.13:0.045));
     }
-    function crash(t,vol) {
+    function crash(t,vol){
       const len=Math.floor(ctx.sampleRate*1.2);
       const buf=ctx.createBuffer(1,len,ctx.sampleRate);
       const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
@@ -504,7 +575,6 @@ function playDrumroll(duration,onEnd) {
       const g=ctx.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+1.0);
       src.connect(hp);hp.connect(g);g.connect(master);src.start(t);src.stop(t+1.2);
     }
-
     let t=ctx.currentTime;const end=t+duration;
     crash(t,0.7);kick(t,0.9);
     const ph1end=t+duration*0.35;let iv=0.36,beat=0;
@@ -516,13 +586,13 @@ function playDrumroll(duration,onEnd) {
     crash(end-0.28,1.0);
     for(let i=0;i<10;i++){const ft=end-0.25+i*0.02;snare(ft,1.0);kick(ft,0.9);hihat(ft,0.7,i===9);}
     setTimeout(onEnd,duration*1000);
-  } catch(e){setTimeout(onEnd,duration*1000);}
+  }catch(e){setTimeout(onEnd,duration*1000);}
 }
 
-function playFanfare(prizeIdx) {
-  try {
+function playFanfare(prizeIdx){
+  try{
     const ctx=getAudioCtx();if(!ctx)return;
-    function trumpet(t,freq,dur,vol) {
+    function trumpet(t,freq,dur,vol){
       const master=ctx.createGain();
       master.gain.setValueAtTime(0,t);master.gain.linearRampToValueAtTime(vol,t+0.03);
       master.gain.setValueAtTime(vol*0.85,t+0.09);master.gain.setValueAtTime(vol*0.85,t+dur-0.06);
@@ -543,18 +613,18 @@ function playFanfare(prizeIdx) {
     const seq=seqs[prizeIdx]||seqs[0];
     let t=now+0.05;
     seq.forEach(note=>{trumpet(t,note.f,note.d,0.38);t+=note.d+0.04;});
-  } catch(e){}
+  }catch(e){}
 }
 
 // ===== 抽選 =====
-function pickWinner() {
-  const used=state.winners.map(w=>w.num);
+function pickWinner(){
+  const used=winners.map(w=>w.num);
   const pool=Array.from({length:50},(_,i)=>i+1).filter(n=>!used.includes(n));
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
-function startSpin() {
-  if(spinning||state.spinCount>=3)return;
+function startSpin(){
+  if(spinning||spinCount>=3)return;
   getAudioCtx();
   spinning=true;
   document.getElementById('spinBtn').disabled=true;
@@ -568,7 +638,7 @@ function startSpin() {
   playStartSignal(()=>{
     clearInterval(blinkId);
     let lastNum=-1,changeInterval=55,elapsed=0;
-    function rollTick() {
+    function rollTick(){
       if(!spinning)return;
       let n;do{n=Math.floor(Math.random()*50)+1;}while(n===lastNum);
       lastNum=n;setSlotNumber(n,'rolling');
@@ -582,24 +652,25 @@ function startSpin() {
     playDrumroll(DRUM_DURATION,()=>{
       spinning=false;clearTimeout(slotAnimId);
       let flashes=0;
-      function flashFinal() {
+      function flashFinal(){
         setSlotNumber(targetNum,flashes%2===0?'slowing':'rolling');
         flashes++;
         if(flashes<8){setTimeout(flashFinal,75);}
         else{
           setSlotNumber(targetNum,'slowing');
-          playFanfare(state.spinCount);
-          const name=state.entries[targetNum]||'(空くじ → チーム還元)';
-          const prz=PRIZES[state.spinCount];
-          state.winners.push({name,num:targetNum});
-          state.spinCount++;
-          saveState();
-          const nextPrz=PRIZES[state.spinCount];
-          document.getElementById('next-prize').textContent=nextPrz?nextPrz.label+' '+nextPrz.amount:'抽選完了';
-          document.getElementById('spinBtn').disabled=state.spinCount>=3;
+          playFanfare(spinCount);
+          const name=entries[targetNum]||'(空くじ → チーム還元)';
+          const prz=PRIZES[spinCount];
+          const winner={num:targetNum,name,prize:prz.label,amount:prz.amount};
+          winners.push(winner);
+          spinCount++;
+          // スプレッドシートに当選者を保存
+          api({action:'addWinner',num:targetNum,name,prize:prz.label,amount:prz.amount});
+          updatePrizeIndicator();
+          document.getElementById('spinBtn').disabled=spinCount>=3;
           document.getElementById('spin-result').innerHTML=`<div class="pop-in" style="margin-top:12px;">
             <div class="result-name">${name}</div>
-            <div class="result-dept">${state.entries[targetNum]?'No.'+targetNum:''}</div>
+            <div class="result-dept">${entries[targetNum]?'No.'+targetNum:''}</div>
             <span class="prize-badge ${prz.badgeCls}" style="margin-top:10px;font-size:15px;">${prz.label}　${prz.amount}</span>
           </div>`;
           renderWinners();renderResults();
@@ -610,47 +681,42 @@ function startSpin() {
   });
 }
 
-const ADMIN_PASS = 'tasuku91';
-
-function checkAdminPass() {
-  const input = prompt('管理者パスワードを入力してください');
-  if (input === null) return false; // キャンセル
-  if (input !== ADMIN_PASS) {
-    alert('パスワードが違います');
-    return false;
-  }
-  return true;
+// ===== リセット =====
+async function resetLottery(){
+  if(!checkAdminPass())return;
+  if(!confirm('抽選結果をリセットしますか？（エントリーは残ります）'))return;
+  showLoading('リセット中...');
+  try{
+    await api({action:'resetLottery'});
+    winners=[];spinCount=0;
+    document.getElementById('spin-result').innerHTML='';
+    updatePrizeIndicator();
+    document.getElementById('spinBtn').disabled=false;
+    resetSlotDisplay();renderWinners();renderResults();
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  finally{hideLoading();}
 }
 
-function resetLottery() {
-  if (!checkAdminPass()) return;
-  if (!confirm('抽選結果をリセットしますか？（エントリーは残ります）')) return;
-  state.winners=[];state.spinCount=0;
-  document.getElementById('spin-result').innerHTML='';
-  saveState();
-  document.getElementById('next-prize').textContent=PRIZES[0].label+' '+PRIZES[0].amount;
-  document.getElementById('spinBtn').disabled=false;
-  resetSlotDisplay();renderWinners();renderResults();
+async function resetAll(){
+  if(!checkAdminPass())return;
+  if(!confirm('全データをリセットして来月の準備をしますか？\n（エントリー・当選者すべて削除されます）'))return;
+  showLoading('リセット中...');
+  try{
+    await api({action:'resetAll'});
+    entries={};winners=[];spinCount=0;
+    document.getElementById('spin-result').innerHTML='';
+    updatePrizeIndicator();
+    document.getElementById('spinBtn').disabled=false;
+    render();resetSlotDisplay();renderWinners();renderResults();
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('err');}
+  finally{hideLoading();}
 }
 
-function resetAll() {
-  if (!checkAdminPass()) return;
-  if (!confirm('全データをリセットして来月の準備をしますか？\n（エントリー・当選者すべて削除されます）')) return;
-  state={entries:{},winners:[],spinCount:0};
-  document.getElementById('spin-result').innerHTML='';
-  saveState();render();resetSlotDisplay();renderWinners();renderResults();
-  document.getElementById('next-prize').textContent=PRIZES[0].label+' '+PRIZES[0].amount;
-  document.getElementById('spinBtn').disabled=false;
-}
-
-loadState();
-render();
-renderWinners();
-renderResults();
+// ===== 初期化 =====
+loadAll();
 resetSlotDisplay();
-const prz=PRIZES[state.spinCount];
-if(prz)document.getElementById('next-prize').textContent=prz.label+' '+prz.amount;
-document.getElementById('spinBtn').disabled=state.spinCount>=3;
 </script>
 </body>
 </html>
